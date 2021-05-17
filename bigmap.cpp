@@ -29,6 +29,12 @@ void Tilemap::setTile(uint16_t _col, uint16_t _row, uint16_t _index) {
   tiles[offset] = _index;
 }
 
+uint16_t Tilemap::get_tile_index(uint16_t _col, uint16_t _row) { 
+  uint16_t offset = (_row * num_cols) + _col;
+  return tiles[offset];
+}
+
+
 Viewport::Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inner_y_offset_px, uint16_t _x_px, uint16_t _y_px, uint16_t _w_px, uint16_t _h_px) { 
   tilemap = _tilemap;
   inner_y_offset_px = _inner_y_offset_px;
@@ -53,9 +59,7 @@ Viewport* Screen::get_viewport(uint8_t _index) {
   return viewports[_index];
 }
 
-Screen*   screen;
-VGA_T4*   vga;
-Tilelist* tilelist;
+//TODO make these local to BigMapEngine
 
 BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
   screen = _screen;
@@ -66,13 +70,17 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
 void BigMapEngine::render_next_frame() { 
   vga->waitLine(480+40);
   vga->drawfilledcircle(160,120,50,0x60,0xFF);
-//  for(int v=0;v<screen->num_viewports;v++) {
-//    Viewport* viewport = screen->get_viewport(v); 
-//    render_viewport(viewport); 
-//  } 
+  for(int v=0;v<screen->num_viewports;v++) {
+    Viewport* viewport = screen->get_viewport(v); 
+    render_viewport(viewport); 
+  } 
 }
 
 void BigMapEngine::render_viewport(Viewport* viewport) {
+
+  Serial.print("rendering viewport with width ");
+  Serial.println(viewport->w_px);
+
   Tilemap* tilemap     = viewport->tilemap;
   uint16_t col1        = viewport->inner_x_offset_px / tilelist->tile_size_px;
   uint16_t row1        = viewport->inner_y_offset_px / tilelist->tile_size_px;
@@ -91,14 +99,16 @@ void BigMapEngine::render_viewport(Viewport* viewport) {
   //Serial.print("width ");
   //Serial.println(width);
 
-  for(uint8_t r=row1; r<row1+width; r++) {
-    for(uint8_t c=col1; c<col1+height; c++) {
-      //Serial.print(r);
-      //Serial.print("-");
-      //Serial.println(c);
+  for(uint8_t r=row1; r<row1+height; r++) {
+    for(uint8_t c=col1; c<col1+width; c++) {
+      Serial.print(r);
+      Serial.print("-");
+      Serial.print(c);
+      Serial.print("...");
+      Serial.println(viewport->tilemap->get_tile_index(r,c));
 
       vga->drawBitmap(
-        tilelist->get_tile(4),
+        tilelist->get_tile(3),
         tilelist->tile_size_px,
         viewport->x_px + (c * tilelist->tile_size_px) + viewport->inner_x_offset_px,
         viewport->y_px + (r * tilelist->tile_size_px) + viewport->inner_y_offset_px 

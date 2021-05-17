@@ -26,6 +26,7 @@ public:
 
   Tilemap(uint16_t _num_cols, uint16_t _num_rows);
   void setTile(uint16_t _col, uint16_t _row, uint16_t _index);
+  uint16_t get_tile_index(uint16_t _col, uint16_t _row);
 };
 
 class Viewport{
