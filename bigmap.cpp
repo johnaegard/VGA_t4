@@ -1,5 +1,6 @@
 #include "VGA_t4.h"
 #include "bigmap.h"
+#include "Arduino.h"
 
 Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_px    = _tile_size_px;
@@ -11,6 +12,9 @@ Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
 
 void Tilelist::add_tile_with_color(uint8_t _color){
   uint16_t offset = num_tiles++ * tile_size_bytes;
+  Serial.print("adding tile at offset ");
+  Serial.println(offset);
+
   memset( (void*) &pixels[offset], _color, tile_size_bytes);
 }
 
@@ -33,7 +37,6 @@ uint16_t Tilemap::get_tile_index(uint16_t _col, uint16_t _row) {
   uint16_t offset = (_row * num_cols) + _col;
   return tiles[offset];
 }
-
 
 Viewport::Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inner_y_offset_px, uint16_t _x_px, uint16_t _y_px, uint16_t _w_px, uint16_t _h_px) { 
   tilemap = _tilemap;
@@ -69,7 +72,7 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
 
 void BigMapEngine::render_next_frame() { 
   vga->waitLine(480+40);
-  vga->drawfilledcircle(160,120,50,0x60,0xFF);
+  //vga->drawfilledcircle(160,120,50,0x60,0xFF);
   for(int v=0;v<screen->num_viewports;v++) {
     Viewport* viewport = screen->get_viewport(v); 
     render_viewport(viewport); 
@@ -101,14 +104,16 @@ void BigMapEngine::render_viewport(Viewport* viewport) {
 
   for(uint8_t r=row1; r<row1+height; r++) {
     for(uint8_t c=col1; c<col1+width; c++) {
+      uint8_t tile_index = viewport->tilemap->get_tile_index(c,r); 
+
       Serial.print(r);
       Serial.print("-");
       Serial.print(c);
       Serial.print("...");
-      Serial.println(viewport->tilemap->get_tile_index(r,c));
+      Serial.println(tile_index);
 
       vga->drawBitmap(
-        tilelist->get_tile(3),
+        tilelist->get_tile(tile_index),
         tilelist->tile_size_px,
         viewport->x_px + (c * tilelist->tile_size_px) + viewport->inner_x_offset_px,
         viewport->y_px + (r * tilelist->tile_size_px) + viewport->inner_y_offset_px 
