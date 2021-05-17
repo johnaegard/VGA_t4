@@ -29,8 +29,6 @@ void Tilemap::setTile(uint16_t _col, uint16_t _row, uint16_t _index) {
   tiles[offset] = _index;
 }
 
-Viewport::Viewport(){}
-
 Viewport::Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inner_y_offset_px, uint16_t _x_px, uint16_t _y_px, uint16_t _w_px, uint16_t _h_px) { 
   tilemap = _tilemap;
   inner_y_offset_px = _inner_y_offset_px;
@@ -44,15 +42,15 @@ Viewport::Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inn
 Screen::Screen(uint8_t _max_viewports) {
   max_viewports = _max_viewports;
   num_viewports = 0;
-  viewports = new Viewport[max_viewports];
+  viewports     = (Viewport **) calloc(max_viewports,sizeof(Viewport*));
 }
 
 void Screen::add_viewport(Viewport* _viewport) {
-  viewports[num_viewports++] = *_viewport;
+  viewports[num_viewports++] = _viewport;
 }
 
 Viewport* Screen::get_viewport(uint8_t _index) {
-  return &viewports[_index];
+  return viewports[_index];
 }
 
 Screen*   screen;
@@ -67,9 +65,11 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
 
 void BigMapEngine::render_next_frame() { 
   vga->waitLine(480+40);
-  for(int v=0;v<screen->num_viewports;v++) {
-    render_viewport(screen->get_viewport(v)); 
-  } 
+  vga->drawfilledcircle(160,120,50,0x60,0xFF);
+//  for(int v=0;v<screen->num_viewports;v++) {
+//    Viewport* viewport = screen->get_viewport(v); 
+//    render_viewport(viewport); 
+//  } 
 }
 
 void BigMapEngine::render_viewport(Viewport* viewport) {
@@ -86,8 +86,17 @@ void BigMapEngine::render_viewport(Viewport* viewport) {
   uint8_t  crop_right  = 0; 
   */
 
+  //Serial.print("first row ");
+  //Serial.println(row1);
+  //Serial.print("width ");
+  //Serial.println(width);
+
   for(uint8_t r=row1; r<row1+width; r++) {
     for(uint8_t c=col1; c<col1+height; c++) {
+      //Serial.print(r);
+      //Serial.print("-");
+      //Serial.println(c);
+
       vga->drawBitmap(
         tilelist->get_tile(4),
         tilelist->tile_size_px,
