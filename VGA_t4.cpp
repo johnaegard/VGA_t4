@@ -1740,21 +1740,13 @@ static void drawSpr(unsigned char index, int x, int y) {
 //		framebuffer[y*fb_stride+x] = color;
 //}
 
-void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y) {
-
-/*
-  Serial.print("drawing tile at ");
-  Serial.print(_x);
-  Serial.print(",");
-  Serial.println(_y);
-*/
-
+void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y, uint8_t _skiplines_top) {
   for (uint8_t row=0; row < _bitmap_size_px; row++) {
-    vga_pixel * dst = &framebuffer[((row+_y)*fb_stride)+_x];
+    if (row > _bitmap_size_px - _skiplines_top) break;
+    vga_pixel * dst = &framebuffer[((row+_y-_skiplines_top)*fb_stride)+_x];
+    if (row < _skiplines_top ) continue;
     for (uint8_t col=0; col < _bitmap_size_px; col++) { 
-      //drawPixel(_x+col,_y+row, 0xFF);
       *dst++ = *_pixels++;
-      //*dst++ = 0xFF;
     }
   }
 }

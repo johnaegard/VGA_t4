@@ -39,6 +39,7 @@ public:
   uint16_t w_px; 
   uint16_t h_px;
   Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inner_y_offset_px, uint16_t _x_px, uint16_t _y_px, uint16_t _w_px, uint16_t _h_px);
+  void set_inner_offset_px(uint16_t _x, uint16_t _y);
 };
 
 class Screen { 

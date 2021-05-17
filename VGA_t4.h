@@ -205,7 +205,7 @@ public:
   void writeLine16(int width, int height, int y, uint16_t *buf);  
   void writeScreen(int width, int height, int stride, uint8_t *buffer, vga_pixel *palette);
   void copyLine(int width, int height, int ysrc, int ydst);
-  void drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y);
+  void drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y, uint8_t _skiplines_top);
 
   // ************************************** GFX API extension from darthvader ******************************************************
   void drawline(int16_t x1, int16_t y1, int16_t x2, int16_t y2, vga_pixel color);
