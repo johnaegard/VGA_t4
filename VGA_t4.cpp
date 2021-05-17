@@ -1735,6 +1735,14 @@ static void drawSpr(unsigned char index, int x, int y) {
   }
 }
 
+void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y) {
+  for (uint16_t row=0; row<_bitmap_size_px; row++) {
+    vga_pixel * dst=&framebuffer[((row+_y)*fb_stride)+_x];
+    for (uint16_t col=0; col<_bitmap_size_px; col++) { 
+      *dst++ = *_pixels++;
+    }
+  }
+}
 
 static void drawTile(unsigned char tile, int x, int y) {
   vga_pixel * src=&tilesbuffer[tile*TILES_W*TILES_H];

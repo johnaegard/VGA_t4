@@ -14,6 +14,10 @@ void Tilelist::add_tile_with_color(uint8_t _color){
   memset( (void*) &pixels[offset], _color, tile_size_bytes);
 }
 
+vga_pixel* Tilelist::get_tile(uint16_t _index) {
+  return &pixels[_index * tile_size_bytes];
+}
+
 Tilemap::Tilemap(uint16_t _num_cols, uint16_t _num_rows){
   num_rows = _num_rows;
   num_cols = _num_cols;
@@ -24,6 +28,8 @@ void Tilemap::setTile(uint16_t _col, uint16_t _row, uint16_t _index) {
   uint16_t offset = (_row * num_cols) + _col;
   tiles[offset] = _index;
 }
+
+Viewport::Viewport(){}
 
 Viewport::Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inner_y_offset_px, uint16_t _x_px, uint16_t _y_px, uint16_t _w_px, uint16_t _h_px) { 
   tilemap = _tilemap;
@@ -38,29 +44,58 @@ Viewport::Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inn
 Screen::Screen(uint8_t _max_viewports) {
   max_viewports = _max_viewports;
   num_viewports = 0;
-  viewports = (Viewport**) calloc(max_viewports, sizeof(Viewport*));
+  viewports = new Viewport[max_viewports];
 }
 
 void Screen::add_viewport(Viewport* _viewport) {
-  uint16_t offset = num_viewports++ * sizeof(Viewport*);
-  viewports[offset] = _viewport;
+  viewports[num_viewports++] = *_viewport;
 }
 
 Viewport* Screen::get_viewport(uint8_t _index) {
-  uint16_t offset =  sizeof(Viewport*) * _index;
-  return viewports[offset];
+  return &viewports[_index];
 }
 
-Screen* screen;
-VGA_T4* vga;
+Screen*   screen;
+VGA_T4*   vga;
+Tilelist* tilelist;
 
-BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga) {
+BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
   screen = _screen;
   vga    = _vga;
+  tilelist = _tilelist;
 }
 
-void BigMapEngine::compute_next_frame() { 
+void BigMapEngine::render_next_frame() { 
   vga->waitLine(480+40);
+  for(int v=0;v<screen->num_viewports;v++) {
+    render_viewport(screen->get_viewport(v)); 
+  } 
+}
+
+void BigMapEngine::render_viewport(Viewport* viewport) {
+  Tilemap* tilemap     = viewport->tilemap;
+  uint16_t col1        = viewport->inner_x_offset_px / tilelist->tile_size_px;
+  uint16_t row1        = viewport->inner_y_offset_px / tilelist->tile_size_px;
+  uint16_t width       = col1 + (viewport->w_px/tilelist->tile_size_px);
+  uint16_t height      = row1 + (viewport->h_px/tilelist->tile_size_px);
+
+  /*
+  uint8_t  crop_left   = viewport->inner_x_offset_px % tilelist->tile_size_px;
+  uint8_t  crop_top    = viewport->inner_y_offset_px % tilelist->tile_size_px;
+  uint8_t  crop_bot    = 0;
+  uint8_t  crop_right  = 0; 
+  */
+
+  for(uint8_t r=row1; r<row1+width; r++) {
+    for(uint8_t c=col1; c<col1+height; c++) {
+      vga->drawBitmap(
+        tilelist->get_tile(4),
+        tilelist->tile_size_px,
+        viewport->x_px + (c * tilelist->tile_size_px) + viewport->inner_x_offset_px,
+        viewport->y_px + (r * tilelist->tile_size_px) + viewport->inner_y_offset_px 
+      );
+    } 
+  }
 }
 
 //void VGA_T4::run_bigmap_engine()

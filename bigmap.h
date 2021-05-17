@@ -15,6 +15,7 @@ public:
 
   Tilelist(uint8_t tilesizepx, uint16_t maxtiles);
   void add_tile_with_color(uint8_t color);
+  vga_pixel* get_tile(uint16_t index);
 };
 
 class Tilemap{
@@ -36,15 +37,15 @@ public:
   uint16_t y_px;
   uint16_t w_px; 
   uint16_t h_px;
-
+  Viewport();
   Viewport(Tilemap* _tilemap, uint16_t _inner_x_offset_px, uint16_t _inner_y_offset_px, uint16_t _x_px, uint16_t _y_px, uint16_t _w_px, uint16_t _h_px);
 };
 
 class Screen { 
 public:
-  Viewport** viewports;
-  uint8_t    max_viewports;
-  uint8_t    num_viewports;
+  Viewport* viewports;
+  uint8_t   max_viewports;
+  uint8_t   num_viewports;
 
   Screen(uint8_t _max_viewports);
   void add_viewport(Viewport* _viewport); 
@@ -55,8 +56,12 @@ class BigMapEngine {
 public:
   Screen* screen;
   VGA_T4*  vga; 
-  BigMapEngine(Screen* _screen, VGA_T4* _vga);
-  void compute_next_frame();
+  Tilelist* tilelist; 
+  BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist);
+  void render_next_frame();
+
+private:
+  void render_viewport(Viewport* viewport);
 };
 
 #endif
