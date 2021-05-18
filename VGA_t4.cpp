@@ -1740,11 +1740,11 @@ static void drawSpr(unsigned char index, int x, int y) {
 //		framebuffer[y*fb_stride+x] = color;
 //}
 
-void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y, uint8_t _skiplines_top) {
+void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y, uint8_t _vertical_tile_offset, bool _crop_top, bool _crop_bottom) {
   for (uint8_t row=0; row < _bitmap_size_px; row++) {
-    if (row > _bitmap_size_px - _skiplines_top) break;
-    vga_pixel * dst = &framebuffer[((row+_y-_skiplines_top)*fb_stride)+_x];
-    if (row < _skiplines_top ) continue;
+    vga_pixel * dst = &framebuffer[((row+_y-_vertical_tile_offset)*fb_stride)+_x];
+    if (_crop_top && row < _vertical_tile_offset) continue;
+    if (_crop_bottom && row == _vertical_tile_offset) break; 
     for (uint8_t col=0; col < _bitmap_size_px; col++) { 
       *dst++ = *_pixels++;
     }

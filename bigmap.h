@@ -60,9 +60,11 @@ public:
   Tilelist* tilelist; 
   BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist);
   void render_next_frame();
+  uint32_t framecounter;
 
 private:
   void render_viewport(Viewport* viewport);
+  
 };
 
 #endif
