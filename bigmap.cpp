@@ -116,18 +116,12 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
   for(uint8_t r=row1; r<row2; r++) {
 
     int16_t line = ((r-row1) * tilelist->tile_size_px) - voff;
-    bool crop_top = (r==0);
-    bool crop_bottom = (r==row2-1);
 
     if (framecounter % 400 == 0) {
       Serial.print("rendering row=");
       Serial.print(r);
       Serial.print(" line=");
-      Serial.print(line);
-      Serial.print(" crop top=");
-      Serial.print(crop_top);
-      Serial.print(" crop bot=");
-      Serial.println(crop_bottom);
+      Serial.println(line);
     }
     for(uint8_t c=col1; c<col2; c++) {
       uint8_t tile_index = viewport->tilemap->get_tile_index(c,r); 
@@ -136,9 +130,8 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
         tilelist->tile_size_px,
         viewport->x_px + ((c-col1) * tilelist->tile_size_px), 
         line,
-        voff,
-        crop_top,
-        crop_bottom,
+        viewport->y_px,
+        viewport->y_px + viewport->h_px -1 ,
         framecounter % 400 == 0 && (r==row2-1 || r==row1) && c==0,
         _render 
       );
