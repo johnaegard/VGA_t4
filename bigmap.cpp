@@ -13,6 +13,11 @@ Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
 void Tilelist::add_tile_with_color(uint8_t _color){
   uint16_t offset = num_tiles++ * tile_size_bytes;
   memset( (void*) &pixels[offset], _color, tile_size_bytes);
+  uint8_t random_color = random(0,256);
+  pixels[offset+27] =random_color;
+  pixels[offset+28] =random_color;
+  pixels[offset+35] =random_color;
+  pixels[offset+36] =random_color;
 }
 
 vga_pixel* Tilelist::get_tile(uint16_t _index) {
@@ -96,7 +101,7 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
   uint16_t height = viewport->h_px/tilelist->tile_size_px;
   uint16_t row2   = row1+height+1; 
 
-  uint16_t crop_top =   viewport->y_px;
+  uint16_t crop_top    =   viewport->y_px;
   uint16_t crop_bottom = viewport->y_px + viewport->h_px -1;
 
   if (framecounter % 600 == 0) {
