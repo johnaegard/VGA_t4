@@ -59,11 +59,11 @@ public:
   VGA_T4*  vga; 
   Tilelist* tilelist; 
   BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist);
-  void render_next_frame();
+  void render_next_frame(bool _render);
   uint32_t framecounter;
 
 private:
-  void render_viewport(Viewport* viewport);
+  void render_viewport(Viewport* viewport, bool _render);
   
 };
 

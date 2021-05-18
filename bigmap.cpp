@@ -73,18 +73,20 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
   framecounter = 0;
 }
 
-void BigMapEngine::render_next_frame() { 
+void BigMapEngine::render_next_frame(bool _render) { 
   vga->waitLine(480+40);
   for(int v=0;v<screen->num_viewports;v++) {
     Viewport* viewport = screen->get_viewport(v); 
-    render_viewport(viewport); 
+    render_viewport(viewport, _render); 
   } 
   framecounter++; 
 }
 
-void BigMapEngine::render_viewport(Viewport* viewport) {
+void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
 
   Tilemap* tilemap = viewport->tilemap;
+
+  uint16_t voff    = viewport->inner_y_offset_px % tilelist->tile_size_px;
 
   uint16_t col1   = viewport->inner_x_offset_px / tilelist->tile_size_px;
   uint16_t width  = viewport->w_px/tilelist->tile_size_px;
@@ -92,40 +94,53 @@ void BigMapEngine::render_viewport(Viewport* viewport) {
 
   uint16_t row1   = viewport->inner_y_offset_px / tilelist->tile_size_px;
   uint16_t height = viewport->h_px/tilelist->tile_size_px;
-  uint16_t row2   = row1+height;
-   
-  uint16_t voff    = viewport->inner_y_offset_px % tilelist->tile_size_px;
+  uint16_t row2   = row1+height + ((voff > 1) ? 1 : 0); // render a bonus row if voff is off-zero
 
-  if (framecounter % 200 == 0) {
+  if (framecounter % 400 == 0) {
     Serial.print("frame=");
     Serial.print(framecounter);
     Serial.print(" inner_yoff=");
     Serial.print(viewport->inner_y_offset_px);
     Serial.print(" voff=");
     Serial.print(voff);
-    Serial.print(" col=");
+    Serial.print(" cols=");
     Serial.print(col1);
     Serial.print("...");
     Serial.print(col2);
-    Serial.print(" row=");
+    Serial.print(" rows=");
     Serial.print(row1);
     Serial.print("...");
     Serial.println(row2);
   }
 
-//  for(uint8_t r=row1; r<row1+height; r++) {
-//    for(uint8_t c=col1; c<col1+width; c++) {
   for(uint8_t r=row1; r<row2; r++) {
+
+    int16_t line = ((r-row1) * tilelist->tile_size_px) - voff;
+    bool crop_top = (r==0);
+    bool crop_bottom = (r==row2-1);
+
+    if (framecounter % 400 == 0) {
+      Serial.print("rendering row=");
+      Serial.print(r);
+      Serial.print(" line=");
+      Serial.print(line);
+      Serial.print(" crop top=");
+      Serial.print(crop_top);
+      Serial.print(" crop bot=");
+      Serial.println(crop_bottom);
+    }
     for(uint8_t c=col1; c<col2; c++) {
       uint8_t tile_index = viewport->tilemap->get_tile_index(c,r); 
       vga->drawBitmap(
         tilelist->get_tile(tile_index),
         tilelist->tile_size_px,
-        viewport->x_px + (c * tilelist->tile_size_px), 
-        viewport->y_px + (r * tilelist->tile_size_px),
+        viewport->x_px + ((c-col1) * tilelist->tile_size_px), 
+        line,
         voff,
-        (r==0),
-        (r==row1+height)
+        crop_top,
+        crop_bottom,
+        framecounter % 400 == 0 && (r==row2-1 || r==row1) && c==0,
+        _render 
       );
     } 
   }

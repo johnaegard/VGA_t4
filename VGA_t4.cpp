@@ -1740,14 +1740,20 @@ static void drawSpr(unsigned char index, int x, int y) {
 //		framebuffer[y*fb_stride+x] = color;
 //}
 
-void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, uint16_t _x, uint16_t _y, uint8_t _vertical_tile_offset, bool _crop_top, bool _crop_bottom) {
+void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x, int16_t _y, uint8_t _vertical_tile_offset, bool _crop_top, bool _crop_bottom, bool _log, bool _render) {
   for (uint8_t row=0; row < _bitmap_size_px; row++) {
-    vga_pixel * dst = &framebuffer[((row+_y-_vertical_tile_offset)*fb_stride)+_x];
-    if (_crop_top && row < _vertical_tile_offset) continue;
-    if (_crop_bottom && row == _vertical_tile_offset) break; 
-    for (uint8_t col=0; col < _bitmap_size_px; col++) { 
-      *dst++ = *_pixels++;
+    if(_log) {
+      Serial.print(" _y+row=");
+      Serial.println(_y+row);
     }
+    if (_y+row<0) continue;
+    if (_y+row>239) break;
+    vga_pixel * dst = &framebuffer[((row+_y)*fb_stride)+_x];
+    for (uint8_t col=0; col < _bitmap_size_px; col++) { 
+      if (_render) {
+        *dst++ = *_pixels++;
+      }
+    } 
   }
 }
 
