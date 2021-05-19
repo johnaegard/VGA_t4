@@ -91,15 +91,14 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
 
   Tilemap* tilemap = viewport->tilemap;
 
-  uint16_t voff    = viewport->inner_y_offset_px % tilelist->tile_size_px;
-
   uint16_t col1   = viewport->inner_x_offset_px / tilelist->tile_size_px;
   uint16_t width  = viewport->w_px/tilelist->tile_size_px;
   uint16_t col2   = col1+width;
 
-  uint16_t row1   = viewport->inner_y_offset_px / tilelist->tile_size_px;
+  uint16_t row1   = (viewport->inner_y_offset_px / tilelist->tile_size_px)-1;
   uint16_t height = viewport->h_px/tilelist->tile_size_px;
-  uint16_t row2   = row1+height+1; 
+  uint16_t row2   = row1+height+2; 
+  uint16_t voff   = viewport->inner_y_offset_px % tilelist->tile_size_px;
 
   uint16_t crop_top    =   viewport->y_px;
   uint16_t crop_bottom = viewport->y_px + viewport->h_px -1;
@@ -146,7 +145,7 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
         line,
         crop_top,
         crop_bottom,
-        framecounter % 600 == 0 && (r==row2-1 || r==row1) && c==0,
+        framecounter % 600 == 0 && (r==row2-1 || r<row1+1) && c==0,
         _render 
       );
     } 
