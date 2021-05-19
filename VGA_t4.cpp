@@ -1763,11 +1763,11 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
     vga_pixel * dst = &framebuffer[((row+_y)*fb_stride)+_x];
     for (uint8_t col=0; col < _bitmap_size_px; col++) { 
       if (_x + col > _crop_right) {
-        _pixels++;
-        continue;
+        _pixels+=_bitmap_size_px-col;
+        break;
       }
-      if (_render) {
-        *dst++ = *_pixels++;
+     if (_render) {
+      *dst++ = *_pixels++;
       }
     } 
   }
