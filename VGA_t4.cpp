@@ -658,7 +658,7 @@ vga_error_t VGA_T4::begin(vga_mode_t mode)
 	  gfxbuffer = (vga_pixel*) ((void*)((intptr_t)gfxbufferP & ~ALIGNDMA)); //Align buffer;
   }	  
   if (gfxbuffer == NULL) return(VGA_ERROR);  
-  memset((void*)&gfxbuffer[0],0, fb_stride*fb_height*sizeof(vga_pixel)+4);  
+  //memset((void*)&gfxbuffer[0],0, fb_stride*fb_height*sizeof(vga_pixel)+4);  
   framebuffer = (vga_pixel*)&gfxbuffer[left_border];
 
   return(VGA_OK);
