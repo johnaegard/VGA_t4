@@ -96,15 +96,17 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
 
   uint16_t col1   = viewport->inner_x_offset_px / tilelist->tile_size_px;
   uint16_t width  = viewport->w_px/tilelist->tile_size_px;
-  uint16_t col2   = col1+width;
+  uint16_t col2   = col1+width+2;
+  uint16_t xoff   = viewport->inner_x_offset_px % tilelist->tile_size_px;
 
-  uint16_t row1   = (viewport->inner_y_offset_px / tilelist->tile_size_px);
+  uint16_t row1   = viewport->inner_y_offset_px / tilelist->tile_size_px;
   uint16_t height = viewport->h_px/tilelist->tile_size_px;
   uint16_t row2   = row1+height+2; 
   uint16_t voff   = viewport->inner_y_offset_px % tilelist->tile_size_px;
 
   uint16_t crop_top    = viewport->y_px;
   uint16_t crop_bottom = viewport->y_px + viewport->h_px -1;
+  uint16_t crop_right  = viewport->x_px + viewport->w_px -1;
 
   if (framecounter % 600 == 0) {
     Serial.print(" frame=");
@@ -143,14 +145,19 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
       Serial.println(crop_bottom);
     }
     for(uint8_t c=col1; c<col2; c++) {
+
+      int16_t viewport_col = ((c-col1) * tilelist->tile_size_px) - xoff;
+      int16_t screen_col   = viewport->x_px + viewport_col;
+
       uint8_t tile_index = viewport->tilemap->get_tile_index(c,r); 
       vga->drawBitmap(
         tilelist->get_tile(tile_index),
         tilelist->tile_size_px,
-        viewport->x_px + ((c-col1) * tilelist->tile_size_px), 
+        screen_col,
         screen_line,
         crop_top,
         crop_bottom,
+        crop_right,
         framecounter % 600 == 0 && c==0,
         _render 
       );
