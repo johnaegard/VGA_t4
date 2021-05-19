@@ -1746,10 +1746,17 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
       _pixels += _bitmap_size_px * sizeof(vga_pixel);
       continue;
     }
-    if (_y+row>_crop_bottom) break;
-    if(_log) {
+   if(_log) {
       Serial.print(" _y+row=");
       Serial.println(_y+row);
+    }
+    if (_y+row>_crop_bottom) { 
+      if(_log) {
+        Serial.print(">crop_bottom (");
+        Serial.print(_crop_bottom);
+        Serial.println("), breaking");
+      }
+      break;
     }
     vga_pixel * dst = &framebuffer[((row+_y)*fb_stride)+_x];
     for (uint8_t col=0; col < _bitmap_size_px; col++) { 

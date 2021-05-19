@@ -58,6 +58,7 @@ void Viewport::set_inner_offset_px(uint16_t _x, uint16_t _y) {
 Screen::Screen(uint8_t _max_viewports) {
   max_viewports = _max_viewports;
   num_viewports = 0;
+  //TODO this allocation is not right. 
   viewports     = (Viewport **) calloc(max_viewports,sizeof(Viewport*));
 }
 
@@ -83,28 +84,30 @@ void BigMapEngine::render_next_frame(bool _render) {
   for(int v=0;v<screen->num_viewports;v++) {
     Viewport* viewport = screen->get_viewport(v); 
     render_viewport(viewport, _render); 
+    if (framecounter % 600 == 0) {
+      Serial.print("rendered viewport=");
+      Serial.print(v);
+    }
   } 
   framecounter++; 
 }
 
 void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
 
-  Tilemap* tilemap = viewport->tilemap;
-
   uint16_t col1   = viewport->inner_x_offset_px / tilelist->tile_size_px;
   uint16_t width  = viewport->w_px/tilelist->tile_size_px;
   uint16_t col2   = col1+width;
 
-  uint16_t row1   = (viewport->inner_y_offset_px / tilelist->tile_size_px)-1;
+  uint16_t row1   = (viewport->inner_y_offset_px / tilelist->tile_size_px);
   uint16_t height = viewport->h_px/tilelist->tile_size_px;
   uint16_t row2   = row1+height+2; 
   uint16_t voff   = viewport->inner_y_offset_px % tilelist->tile_size_px;
 
-  uint16_t crop_top    =   viewport->y_px;
+  uint16_t crop_top    = viewport->y_px;
   uint16_t crop_bottom = viewport->y_px + viewport->h_px -1;
 
   if (framecounter % 600 == 0) {
-    Serial.print("frame=");
+    Serial.print(" frame=");
     Serial.print(framecounter);
     Serial.print(" height=");
     Serial.print(height);
@@ -122,15 +125,18 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
     Serial.println(row2);
   }
 
-  for(uint8_t r=row1; r<=row2; r++) {
+  for(uint8_t r=row1; r<row2; r++) {
 
-    int16_t line = ((r-row1) * tilelist->tile_size_px) - voff;
+    int16_t viewport_line = ((r-row1) * tilelist->tile_size_px) - voff;
+    int16_t screen_line   = viewport->y_px + viewport_line;
 
     if (framecounter % 600 == 0) {
       Serial.print("rendering maprow=");
       Serial.print(r);
+      Serial.print(" viewport line=");
+      Serial.print(viewport_line);
       Serial.print(" screen line=");
-      Serial.print(line);
+      Serial.print(screen_line);
       Serial.print(" crop_top=");
       Serial.print(crop_top);
       Serial.print(" crop_bottom=");
@@ -142,10 +148,10 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
         tilelist->get_tile(tile_index),
         tilelist->tile_size_px,
         viewport->x_px + ((c-col1) * tilelist->tile_size_px), 
-        line,
+        screen_line,
         crop_top,
         crop_bottom,
-        framecounter % 600 == 0 && (r==row2-1 || r<row1+1) && c==0,
+        framecounter % 600 == 0 && c==0,
         _render 
       );
     } 
