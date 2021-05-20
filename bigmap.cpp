@@ -160,7 +160,7 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
         crop_bottom,
         crop_left,
         crop_right,
-        framecounter % 600 == 0 && c==0,
+        framecounter % 600 == 0 && r == row2-1 && c == col2-1,
         _render 
       );
     } 
