@@ -1,0 +1,50 @@
+BUGS
+
+FEATURES
+M1
+  x map defined in userspace
+  x map bigger
+  x map y-scrollable
+  x multiple viewports
+  x map x-scrollable
+  x x-scroll optimization, running out of CPU
+  * fix allocation bug in Screen (use vector?)
+  x full test
+M2 
+  TXRRGGBB 6-bit color
+  optional tile pixel opacity
+  tile zero opacity
+M2
+  * sprites   
+  * x-y positionable
+  * with priority
+  * with transparency
+M2.5
+  text
+  1 font active
+  x-y positionable
+M4 
+  collisions
+M5 
+  sprite velocity
+  sprite animation
+  tile animation 
+5M
+  controls
+M5 
+  sound
+M6 
+  cartridge abstraction?
+  bitmap mode for splash screens?
+
+BACKLOG
+  animated tiles
+  animated sprites
+  brightness bit
+BUGS
+  noise at top of screen on first line
+  remove old VGA code
+  missing 4-5 px on back of line (timing slightly slow?)
+  2D arrays in C++?  how? 
+  standardize on underscores 
+  TILE_SIZE_PX removed
