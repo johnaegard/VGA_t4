@@ -1,6 +1,7 @@
 #include "VGA_t4.h"
 #include "bigmap.h"
 #include "Arduino.h"
+#include <vector>
 
 Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_px    = _tile_size_px;
@@ -60,10 +61,12 @@ Screen::Screen(uint8_t _max_viewports) {
   num_viewports = 0;
   //TODO this allocation is not right. 
   viewports     = (Viewport **) calloc(max_viewports,sizeof(Viewport*));
+  vviewports    = new std::vector<Viewport*>();
 }
 
 void Screen::add_viewport(Viewport* _viewport) {
   viewports[num_viewports++] = _viewport;
+  vviewports->push_back(_viewport); 
 }
 
 Viewport* Screen::get_viewport(uint8_t _index) {

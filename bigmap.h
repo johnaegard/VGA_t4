@@ -2,7 +2,7 @@
 #define _BIGMAP_H
 
 #include "VGA_t4.h"
-
+#include <vector>
 #define MAX_TILES = 512;
 
 class Tilelist{
@@ -47,6 +47,7 @@ public:
   Viewport** viewports;
   uint8_t    max_viewports;
   uint8_t    num_viewports;
+  std::vector<Viewport*>* vviewports;
 
   Screen(uint8_t _max_viewports);
   void add_viewport(Viewport* _viewport); 
