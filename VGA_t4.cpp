@@ -1741,8 +1741,10 @@ static void drawSpr(unsigned char index, int x, int y) {
 //}
 
 void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x, int16_t _y, 
-                        uint16_t _crop_top, uint16_t _crop_bottom, uint16_t _crop_right, 
+                        uint16_t _crop_top, uint16_t _crop_bottom, uint16_t _crop_left, uint16_t _crop_right, 
                         bool _log, bool _render) {
+  uint8_t start_col = (_x < _crop_left) ? _crop_left - _x : 0;
+
   for (uint8_t row=0; row < _bitmap_size_px; row++) {
     if (_y+row<_crop_top) { 
       _pixels += _bitmap_size_px * sizeof(vga_pixel);
@@ -1760,14 +1762,18 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
       }
       break;
     }
+
     vga_pixel * dst = &framebuffer[((row+_y)*fb_stride)+_x];
-    for (uint8_t col=0; col < _bitmap_size_px; col++) { 
+    dst += start_col;
+    _pixels += start_col;
+
+    for (uint8_t col=start_col; col < _bitmap_size_px; col++) { 
       if (_x + col > _crop_right) {
         _pixels+=_bitmap_size_px-col;
         break;
       }
-     if (_render) {
-      *dst++ = *_pixels++;
+      if (_render) {
+        *dst++ = *_pixels++;
       }
     } 
   }

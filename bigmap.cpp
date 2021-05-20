@@ -86,7 +86,7 @@ void BigMapEngine::render_next_frame(bool _render) {
     render_viewport(viewport, _render); 
     if (framecounter % 600 == 0) {
       Serial.print("rendered viewport=");
-      Serial.print(v);
+      Serial.println(v);
     }
   } 
   framecounter++; 
@@ -105,6 +105,7 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
   uint16_t voff   = viewport->inner_y_offset_px % tilelist->tile_size_px;
 
   uint16_t crop_top    = viewport->y_px;
+  uint16_t crop_left   = viewport->x_px;
   uint16_t crop_bottom = viewport->y_px + viewport->h_px -1;
   uint16_t crop_right  = viewport->x_px + viewport->w_px -1;
 
@@ -157,6 +158,7 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
         screen_line,
         crop_top,
         crop_bottom,
+        crop_left,
         crop_right,
         framecounter % 600 == 0 && c==0,
         _render 
