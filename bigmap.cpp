@@ -84,12 +84,12 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
 
 void BigMapEngine::render_next_frame(bool _render) { 
   vga->waitLine(480+40);
-  for(int v=0;v<screen->num_viewports;v++) {
-    Viewport* viewport = screen->get_viewport(v); 
+  for(Viewport* viewport : *(screen->vviewports)) {
+  //for(int v=0;v<screen->num_viewports;v++) {
+  //  Viewport* viewport = screen->get_viewport(v); 
     render_viewport(viewport, _render); 
     if (framecounter % 600 == 0) {
       Serial.print("rendered viewport=");
-      Serial.println(v);
     }
   } 
   framecounter++; 
