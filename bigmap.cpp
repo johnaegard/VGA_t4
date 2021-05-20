@@ -56,21 +56,12 @@ void Viewport::set_inner_offset_px(uint16_t _x, uint16_t _y) {
   inner_y_offset_px = _y;
 }
 
-Screen::Screen(uint8_t _max_viewports) {
-  max_viewports = _max_viewports;
-  num_viewports = 0;
-  //TODO this allocation is not right. 
-  viewports     = (Viewport **) calloc(max_viewports,sizeof(Viewport*));
+Screen::Screen() {
   vviewports    = new std::vector<Viewport*>();
 }
 
 void Screen::add_viewport(Viewport* _viewport) {
-  viewports[num_viewports++] = _viewport;
   vviewports->push_back(_viewport); 
-}
-
-Viewport* Screen::get_viewport(uint8_t _index) {
-  return viewports[_index];
 }
 
 //TODO make these local to BigMapEngine
@@ -85,8 +76,6 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
 void BigMapEngine::render_next_frame(bool _render) { 
   vga->waitLine(480+40);
   for(Viewport* viewport : *(screen->vviewports)) {
-  //for(int v=0;v<screen->num_viewports;v++) {
-  //  Viewport* viewport = screen->get_viewport(v); 
     render_viewport(viewport, _render); 
     if (framecounter % 600 == 0) {
       Serial.print("rendered viewport=");

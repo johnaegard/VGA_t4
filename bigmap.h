@@ -44,14 +44,11 @@ public:
 
 class Screen { 
 public:
-  Viewport** viewports;
-  uint8_t    max_viewports;
   uint8_t    num_viewports;
   std::vector<Viewport*>* vviewports;
 
-  Screen(uint8_t _max_viewports);
+  Screen();
   void add_viewport(Viewport* _viewport); 
-  Viewport* get_viewport(uint8_t index);
 };
 
 class BigMapEngine {
