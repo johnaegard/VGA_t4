@@ -8,9 +8,10 @@ M1
   x multiple viewports
   x map x-scrollable
   x x-scroll optimization, running out of CPU
-  * fix allocation bug in Screen (use vector?)
+  x fix allocation bug in Screen (use vector?)
   x full test
 M2 
+  palette test
   TXRRGGBB 6-bit color
   optional tile pixel opacity
   tile zero opacity
