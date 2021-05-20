@@ -7,18 +7,20 @@ Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_px    = _tile_size_px;
   max_tiles       = _max_tiles;
   pixels          = (vga_pixel*) calloc(tile_size_px * tile_size_px * max_tiles, sizeof(vga_pixel));
-  num_tiles       = 0;
+  num_tiles       = 1;
   tile_size_bytes = tile_size_px * tile_size_px * sizeof(vga_pixel);
 }
 
-void Tilelist::add_tile_with_color(uint8_t _color){
+void Tilelist::add_tile_with_color(uint8_t _color, bool dotted){
   uint16_t offset = num_tiles++ * tile_size_bytes;
   memset( (void*) &pixels[offset], _color, tile_size_bytes);
-  uint8_t random_color = random(0,256);
-  pixels[offset+27] =random_color;
-  pixels[offset+28] =random_color;
-  pixels[offset+35] =random_color;
-  pixels[offset+36] =random_color;
+  if (dotted) {
+    uint8_t random_color = random(0,256);
+    pixels[offset+27] =random_color;
+    pixels[offset+28] =random_color;
+    pixels[offset+35] =random_color;
+    pixels[offset+36] =random_color;
+  }
 }
 
 vga_pixel* Tilelist::get_tile(uint16_t _index) {
@@ -143,18 +145,18 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
       int16_t screen_col   = viewport->x_px + viewport_col;
 
       uint8_t tile_index = viewport->tilemap->get_tile_index(c,r); 
-      vga->drawBitmap(
-        tilelist->get_tile(tile_index),
-        tilelist->tile_size_px,
-        screen_col,
-        screen_line,
-        crop_top,
-        crop_bottom,
-        crop_left,
-        crop_right,
-        framecounter % 600 == 0 && r == row2-1 && c == col2-1,
-        _render 
-      );
+        vga->drawBitmap(
+          tilelist->get_tile(tile_index),
+          tilelist->tile_size_px,
+          screen_col,
+          screen_line,
+          crop_top,
+          crop_bottom,
+          crop_left,
+          crop_right,
+          framecounter % 600 == 0 && r == row2-1 && c == col2-1,
+          _render 
+        );
     } 
   }
 }

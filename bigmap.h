@@ -14,8 +14,8 @@ public:
   vga_pixel* pixels;
 
   Tilelist(uint8_t tilesizepx, uint16_t maxtiles);
-  void add_tile_with_color(uint8_t color);
-  vga_pixel* get_tile(uint16_t index);
+  void add_tile_with_color(uint8_t _color, bool _dotted);
+  vga_pixel* get_tile(uint16_t _index);
 };
 
 class Tilemap{
