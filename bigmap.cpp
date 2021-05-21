@@ -66,6 +66,13 @@ void Screen::add_viewport(Viewport* _viewport) {
   vviewports->push_back(_viewport); 
 }
 
+Sprite::Sprite(Tilelist* _tilelist, uint16_t _index, uint16_t _x_px, uint16_t _y_px) {
+  tilelist = _tilelist;
+  index    = _index;
+  x_px     = x_px;
+  y_px     = y_px;
+}
+
 BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
   screen = _screen;
   vga    = _vga;

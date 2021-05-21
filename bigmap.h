@@ -59,7 +59,7 @@ public:
   uint16_t y_px;
   uint8_t  w_px;
   uint8_t  h_px;
-  Sprite(Tilelist* _tilelist, uint16_t _index, uint16_t _x_px, uint16_t _y_px, uint8_t _w_px, uint8_t _h_px);
+  Sprite(Tilelist* _tilelist, uint16_t _index, uint16_t _x_px, uint16_t _y_px);
 };
 
 class BigMapEngine {
