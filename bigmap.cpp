@@ -66,13 +66,16 @@ void Screen::add_viewport(Viewport* _viewport) {
   vviewports->push_back(_viewport); 
 }
 
-//TODO make these local to BigMapEngine
-
 BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
   screen = _screen;
   vga    = _vga;
   tilelist = _tilelist;
   framecounter = 0;
+  sprites = new std::vector<Sprite*>();
+}
+
+void BigMapEngine::add_sprite(Sprite* _sprite) {
+  sprites->push_back(_sprite);
 }
 
 void BigMapEngine::render_next_frame(bool _render) { 

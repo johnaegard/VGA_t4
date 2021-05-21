@@ -51,18 +51,31 @@ public:
   void add_viewport(Viewport* _viewport); 
 };
 
+class Sprite {
+public:
+  Tilelist* tilelist;
+  uint16_t index;
+  uint16_t x_px;
+  uint16_t y_px;
+  uint8_t  w_px;
+  uint8_t  h_px;
+  Sprite(Tilelist* _tilelist, uint16_t _index, uint16_t _x_px, uint16_t _y_px, uint8_t _w_px, uint8_t _h_px);
+};
+
 class BigMapEngine {
 public:
-  Screen* screen;
-  VGA_T4*  vga; 
-  Tilelist* tilelist; 
+  Screen*               screen;
+  VGA_T4*               vga; 
+  Tilelist*             tilelist; 
+  std::vector<Sprite*>* sprites;
+  
   BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist);
   void render_next_frame(bool _render);
   uint32_t framecounter;
+  void add_sprite(Sprite* _sprite);
 
 private:
   void render_viewport(Viewport* viewport, bool _render);
-  
 };
 
 #endif

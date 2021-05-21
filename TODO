@@ -12,41 +12,28 @@ M1
   x full test
 M2 
   x palette test
-  TXRRGGBB 6-bit color
-  optional tile pixel opacity
-  tile zero opacity
+  x TXRRGGBB 6-bit color
 M3
-  * sprites   
+  * sprites!!!!!
   * x-y positionable
-  * with priority
-  * with transparency
-M2.5
-  text
-  1 font active
-  x-y positionable
-  transparency
-M4 
-  collisions
-M5 
-  sprite velocity
+  * priority
+  * transparency
+  * vga_color support for TXRRGGBB
+M4
+  * controls
+M5
+  * transparent text -- use cool old vidya game font?
+  * collision callbacks (just bounding boxes, I guess)
+M6 
   sprite animation
   tile animation 
-5M
-  controls
-M5 
+M7 
   sound
-M6 
+M8 
   cartridge abstraction?
-  bitmap mode for splash screens?
+  bitmap mode for splash screens?  how to do bitmap assets?
+
 
 BACKLOG
-  animated tiles
-  animated sprites
-  brightness bit
-BUGS
-  noise at top of screen on first line
-  remove old VGA code
-  missing 4-5 px on back of line (timing slightly slow?)
-  2D arrays in C++?  how? 
-  standardize on underscores 
-  TILE_SIZE_PX removed
+  variable naming consistent
+  
