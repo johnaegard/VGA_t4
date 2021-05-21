@@ -7,7 +7,7 @@ Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_px    = _tile_size_px;
   max_tiles       = _max_tiles;
   pixels          = (vga_pixel*) calloc(tile_size_px * tile_size_px * max_tiles, sizeof(vga_pixel));
-  num_tiles       = 1;
+  num_tiles       = 0;
   tile_size_bytes = tile_size_px * tile_size_px * sizeof(vga_pixel);
 }
 

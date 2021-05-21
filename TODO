@@ -11,11 +11,11 @@ M1
   x fix allocation bug in Screen (use vector?)
   x full test
 M2 
-  palette test
+  x palette test
   TXRRGGBB 6-bit color
   optional tile pixel opacity
   tile zero opacity
-M2
+M3
   * sprites   
   * x-y positionable
   * with priority
@@ -24,6 +24,7 @@ M2.5
   text
   1 font active
   x-y positionable
+  transparency
 M4 
   collisions
 M5 
