@@ -1749,13 +1749,11 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
   }
 
   uint8_t start_col = (_x < _crop_left) ? _crop_left - _x : 0;
-  uint8_t end_col   = (_x + _bitmap_size_px > _crop_right) ? _crop_right - _x : _bitmap_size_px;
+  uint8_t start_row = (_y < _crop_top)  ? _crop_top  - _y : 0;
+  uint8_t end_col   = (_x + _bitmap_size_px > _crop_right)  ? _crop_right  - _x + 1 : _bitmap_size_px;
+  uint8_t end_row   = (_y + _bitmap_size_px > _crop_bottom) ? _crop_bottom - _y + 1 : _bitmap_size_px;
 
-  for (uint8_t row=0; row < _bitmap_size_px; row++) {
-    if (_y+row<_crop_top) { 
-      _pixels += _bitmap_size_px * sizeof(vga_pixel);
-      continue;
-    }
+  for (uint8_t row=start_row; row < end_row; row++) {
     if(_log) {
       Serial.print(" _y+row=");
       Serial.println(_y+row);
@@ -1776,7 +1774,7 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
     }
 
     vga_pixel* dst = &framebuffer[((row+_y)*fb_stride)+_x+start_col];
-    vga_pixel*  src = &_pixels[row * _bitmap_size_px + start_col];
+    vga_pixel* src = &_pixels[row * _bitmap_size_px + start_col];
 
     for (uint8_t col=start_col; col < end_col; col++) { 
       if (_render) {
