@@ -37,7 +37,8 @@ typedef uint16_t vga_pixel;
 #define VGA_RGB(r,g,b)  ( (((r>>3)&0x1f)<<11) | (((g>>2)&0x3f)<<5) | (((b>>3)&0x1f)<<0) )
 #else
 typedef uint8_t vga_pixel;
-#define VGA_RGB(r,g,b)   ( (((r>>5)&0x07)<<5) | (((g>>5)&0x07)<<2) | (((b>>6)&0x3)<<0) )
+#define VGA_RGB(r,g,b)          ( (((r>>5)&0x07)<<5) | (((g>>5)&0x07)<<2) | (((b>>6)&0x3)<<0) )
+#define VGA_TIRRGGBB(t,i,r,g,b) ( (t<<7) | (i<<6) | ((r<<4)&0b110000) | ((g<<2)&0b1100) | (b&0b11) )
 #endif
 
 typedef enum vga_mode_t

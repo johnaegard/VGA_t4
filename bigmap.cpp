@@ -11,11 +11,16 @@ Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_bytes = tile_size_px * tile_size_px * sizeof(vga_pixel);
 }
 
+void Tilelist::add_tile(vga_pixel* _pixels) {
+  uint16_t base_offset = num_tiles++ * tile_size_bytes;
+  memcpy((void*) &pixels[base_offset], (void*) _pixels, tile_size_bytes);
+}
+
 void Tilelist::add_tile_with_color(uint8_t _color, bool dotted){
   uint16_t offset = num_tiles++ * tile_size_bytes;
   memset( (void*) &pixels[offset], _color, tile_size_bytes);
   if (dotted) {
-    uint8_t random_color = random(0,256);
+    uint8_t random_color = random(0,127);
     pixels[offset+27] =random_color;
     pixels[offset+28] =random_color;
     pixels[offset+35] =random_color;
@@ -69,8 +74,8 @@ void Screen::add_viewport(Viewport* _viewport) {
 Sprite::Sprite(Tilelist* _tilelist, uint16_t _index, uint16_t _x_px, uint16_t _y_px) {
   tilelist = _tilelist;
   index    = _index;
-  x_px     = x_px;
-  y_px     = y_px;
+  x_px     = _x_px;
+  y_px     = _y_px;
 }
 
 BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
@@ -93,6 +98,29 @@ void BigMapEngine::render_next_frame(bool _render) {
       Serial.print("rendered viewport=");
     }
   } 
+  for(Sprite* sprite : *sprites) {
+    if (framecounter % 100 == 0) {
+      Serial.print("rendering sprite at ");
+      Serial.print(sprite->x_px);
+      Serial.print(",");
+      Serial.print(sprite->y_px);
+      Serial.print(" with index=");
+      Serial.println(sprite->index);
+    }
+    vga->drawBitmap(
+      sprite->tilelist->get_tile(sprite->index),
+      sprite->tilelist->tile_size_px,
+      sprite->x_px,
+      sprite->y_px,
+      // TODO these should be looked up and not hardcoded
+      0,
+      239,
+      0,
+      319,
+      framecounter % 100 == 0,
+      true 
+    );
+  }
   framecounter++; 
 }
 
@@ -155,18 +183,18 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
       int16_t screen_col   = viewport->x_px + viewport_col;
 
       uint8_t tile_index = viewport->tilemap->get_tile_index(c,r); 
-        vga->drawBitmap(
-          tilelist->get_tile(tile_index),
-          tilelist->tile_size_px,
-          screen_col,
-          screen_line,
-          crop_top,
-          crop_bottom,
-          crop_left,
-          crop_right,
-          framecounter % 600 == 0 && r == row2-1 && c == col2-1,
-          _render 
-        );
+      vga->drawBitmap(
+        tilelist->get_tile(tile_index),
+        tilelist->tile_size_px,
+        screen_col,
+        screen_line,
+        crop_top,
+        crop_bottom,
+        crop_left,
+        crop_right,
+        framecounter % 600 == 0 && r == row2-1 && c == col2-1,
+        _render 
+      );
     } 
   }
 }

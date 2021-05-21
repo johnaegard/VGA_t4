@@ -1777,9 +1777,28 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
     vga_pixel* src = &_pixels[row * _bitmap_size_px + start_col];
 
     for (uint8_t col=start_col; col < end_col; col++) { 
-      if (_render) {
-        *dst++ = *src++;
+//      if(_log) {
+//        Serial.print(col);
+//        Serial.print(", ");
+//        Serial.print(row);
+//        Serial.print("=");
+//        Serial.println(*src);
+//      }
+      if (((*src)&128) != 128) {
+        *dst = *src;
       }
+//      else {
+//        if(_log) {
+//          Serial.print("transparent px at ");
+//          Serial.print(col);
+//          Serial.print(", ");
+//          Serial.print(row);
+//          Serial.print("...*src & 128 =");
+//          Serial.println((*src) & 128);
+//        }
+//      }
+      dst++;
+      src++;
     }
   }
 }
