@@ -10,10 +10,10 @@ public:
   uint8_t tile_size_px;
   uint16_t num_tiles;
   uint16_t max_tiles;
-  uint8_t tile_size_bytes;
+  uint16_t tile_size_bytes;
   vga_pixel* pixels;
 
-  Tilelist(uint8_t tilesizepx, uint16_t maxtiles);
+  Tilelist(uint16_t _tile_size_px, uint16_t maxtiles);
   void add_tile_with_color(uint8_t _color, bool _dotted);
   void add_tile(vga_pixel*);
   vga_pixel* get_tile(uint16_t _index);

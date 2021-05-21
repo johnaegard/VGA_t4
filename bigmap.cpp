@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <vector>
 
-Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
+Tilelist::Tilelist(uint16_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_px    = _tile_size_px;
   max_tiles       = _max_tiles;
   pixels          = (vga_pixel*) calloc(tile_size_px * tile_size_px * max_tiles, sizeof(vga_pixel));
@@ -13,6 +13,9 @@ Tilelist::Tilelist(uint8_t _tile_size_px, uint16_t _max_tiles) {
 
 void Tilelist::add_tile(vga_pixel* _pixels) {
   uint16_t base_offset = num_tiles++ * tile_size_bytes;
+  Serial.print("copying ");
+  Serial.print(tile_size_bytes);
+  Serial.println(" bytes");
   memcpy((void*) &pixels[base_offset], (void*) _pixels, tile_size_bytes);
 }
 
