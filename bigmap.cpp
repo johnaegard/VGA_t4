@@ -121,6 +121,7 @@ void BigMapEngine::render_next_frame(bool _render) {
       0,
       319,
       framecounter % 100 == 0,
+      true,
       true 
     );
   }
@@ -196,7 +197,8 @@ void BigMapEngine::render_viewport(Viewport* viewport, bool _render) {
         crop_left,
         crop_right,
         framecounter % 600 == 0 && r == row2-1 && c == col2-1,
-        _render 
+        _render ,
+        false
       );
     } 
   }

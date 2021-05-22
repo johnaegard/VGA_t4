@@ -14,16 +14,17 @@ M2
   x palette test
   x TXRRGGBB 6-bit color
 M3
-  * sprites!!!!!
-  * x-y positionable
+  x sprites!!!!!
+  x x-y positionable
+  x transparency
+  x at some kind of scale -- torture test w /32-wide sprites
   * priority
-  * transparency
-  * vga_color support for TXRRGGBB
+  * prove out vga_color support for TXRRGGBB
 M4
   * controls
 M5
   * transparent text -- use cool old vidya game font?
-  * collision callbacks (just bounding boxes, I guess)
+  * collision?  callbacks?
 M6 
   sprite animation
   tile animation 

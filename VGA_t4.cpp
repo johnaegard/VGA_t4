@@ -1742,7 +1742,7 @@ static void drawSpr(unsigned char index, int x, int y) {
 
 void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x, int16_t _y, 
                         uint16_t _crop_top, uint16_t _crop_bottom, uint16_t _crop_left, uint16_t _crop_right, 
-                        bool _log, bool _render) {
+                        bool _log, bool _render, bool trans) {
 
   if ((_x > _crop_right) || (_y > _crop_bottom)) {
     return;
@@ -1776,29 +1776,19 @@ void VGA_T4::drawBitmap(vga_pixel* _pixels, uint8_t _bitmap_size_px, int16_t _x,
     vga_pixel* dst = &framebuffer[((row+_y)*fb_stride)+_x+start_col];
     vga_pixel* src = &_pixels[row * _bitmap_size_px + start_col];
 
-    for (uint8_t col=start_col; col < end_col; col++) { 
-//      if(_log) {
-//        Serial.print(col);
-//        Serial.print(", ");
-//        Serial.print(row);
-//        Serial.print("=");
-//        Serial.println(*src);
-//      }
-      if (((*src)&128) != 128) {
-        *dst = *src;
+    if (trans) {
+      for (uint8_t col=start_col; col < end_col; col++) { 
+        if (((*src)&128) != 128) {
+          *dst = *src;
+        }
+        dst++;
+        src++;
       }
-//      else {
-//        if(_log) {
-//          Serial.print("transparent px at ");
-//          Serial.print(col);
-//          Serial.print(", ");
-//          Serial.print(row);
-//          Serial.print("...*src & 128 =");
-//          Serial.println((*src) & 128);
-//        }
-//      }
-      dst++;
-      src++;
+    }
+    else { 
+      for (uint8_t col=start_col; col < end_col; col++) { 
+          *dst++ = *src++;
+      }
     }
   }
 }
