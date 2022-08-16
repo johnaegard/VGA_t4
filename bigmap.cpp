@@ -2,6 +2,7 @@
 #include "bigmap.h"
 #include "Arduino.h"
 #include <vector>
+#include <string>
 
 Tilelist::Tilelist(uint16_t _tile_size_px, uint16_t _max_tiles) {
   tile_size_px    = _tile_size_px;
@@ -74,11 +75,17 @@ void Screen::add_viewport(Viewport* _viewport) {
   vviewports->push_back(_viewport); 
 }
 
-Sprite::Sprite(Tilelist* _tilelist, uint16_t _index, uint16_t _x_px, uint16_t _y_px) {
-  tilelist = _tilelist;
-  index    = _index;
-  x_px     = _x_px;
-  y_px     = _y_px;
+Sprite::Sprite(Tilelist* _tilelist, uint16_t _start_index, uint16_t _num_frames, uint16_t _x_px, uint16_t _y_px) {
+  tilelist    = _tilelist;
+  start_index = _start_index;
+  num_frames  = _num_frames;
+  x_px        = _x_px;
+  y_px        = _y_px;
+  frame       = 0;
+}
+
+uint16_t Sprite::current_tile_index() {
+  return start_index + frame;
 }
 
 BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
@@ -86,6 +93,7 @@ BigMapEngine::BigMapEngine(Screen* _screen, VGA_T4* _vga, Tilelist* _tilelist) {
   vga    = _vga;
   tilelist = _tilelist;
   framecounter = 0;
+  start_milli = 0;
   sprites = new std::vector<Sprite*>();
 }
 
@@ -93,8 +101,18 @@ void BigMapEngine::add_sprite(Sprite* _sprite) {
   sprites->push_back(_sprite);
 }
 
+float BigMapEngine::get_fps() {
+  uint32_t runtime = millis() - start_milli;
+  return 1000 * (float)framecounter / (float) runtime;
+}
+
 void BigMapEngine::render_next_frame(bool _render) { 
+  if (start_milli == 0) {
+    start_milli = millis();
+  }
+
   vga->waitLine(480+40);
+  vga->clear(0x00);
   for(Viewport* viewport : *(screen->vviewports)) {
     render_viewport(viewport, _render); 
     if (framecounter % 600 == 0) {
@@ -107,11 +125,11 @@ void BigMapEngine::render_next_frame(bool _render) {
       Serial.print(sprite->x_px);
       Serial.print(",");
       Serial.print(sprite->y_px);
-      Serial.print(" with index=");
-      Serial.println(sprite->index);
+      Serial.print(" with current tile=");
+      Serial.println(sprite->current_tile_index());
     }
     vga->drawBitmap(
-      sprite->tilelist->get_tile(sprite->index),
+      sprite->tilelist->get_tile(sprite->current_tile_index()),
       sprite->tilelist->tile_size_px,
       sprite->x_px,
       sprite->y_px,
